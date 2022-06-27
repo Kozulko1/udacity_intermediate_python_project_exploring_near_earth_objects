@@ -15,24 +15,40 @@ You'll edit this file in Task 2.
 import csv
 import json
 
+from typing import List
+
 from models import NearEarthObject, CloseApproach
 
 
-def load_neos(neo_csv_path):
+def load_neos(neo_csv_path) -> List[NearEarthObject]:
     """Read near-Earth object information from a CSV file.
 
     :param neo_csv_path: A path to a CSV file containing data about near-Earth objects.
     :return: A collection of `NearEarthObject`s.
     """
     # TODO: Load NEO data from the given CSV file.
-    return ()
+    with open(neo_csv_path) as file:
+        neos = [NearEarthObject(**neo_info) for neo_info in csv.DictReader(file)]
+    return neos
 
 
-def load_approaches(cad_json_path):
+def load_approaches(cad_json_path) -> List[CloseApproach]:
     """Read close approach data from a JSON file.
 
     :param neo_csv_path: A path to a JSON file containing data about close approaches.
     :return: A collection of `CloseApproach`es.
     """
     # TODO: Load close approach data from the given JSON file.
-    return ()
+    with open(cad_json_path) as file:
+        cad_data = json.loads(file.read())
+        fields: List[str] = cad_data["fields"]
+        cads = [
+            CloseApproach(
+                neo_id=data[fields.index("des")],
+                time=data[fields.index("cd")],
+                distance=data[fields.index("dist")],
+                velocity=data[fields.index("v_rel")],
+            )
+            for data in cad_data.get("data")
+        ]
+    return cads
