@@ -76,36 +76,72 @@ class AttributeFilter:
         raise UnsupportedCriterionError
 
     def __repr__(self):
+        """Return `repr(self)`, a computer-readable string representation of this object."""
         return f"{self.__class__.__name__}(op=operator.{self.op.__name__}, value={self.value})"
 
 
 class DateFilter(AttributeFilter):
+    """A subclass of AttributeFilter.
+
+    A `DateFilter` represents the search criteria pattern comparing the date
+    attribute of a CloseApproach to a reference value.
+    """
+
     @classmethod
     def get(cls, approach: CloseApproach) -> date:
+        """Return the date attribute from a CloseApproach."""
         return approach.time.date()
 
 
 class DiameterFilter(AttributeFilter):
+    """A subclass of AttributeFilter.
+
+    A `DiameterFilter` represents the search criteria pattern comparing the diameter
+    attribute of a NearEarthObject to a reference value.
+    """
+
     @classmethod
     def get(cls, approach: CloseApproach) -> float:
+        """Return the diameter attribute from a CloseApproach's NEO."""
         return approach.neo.diameter
 
 
 class DistanceFilter(AttributeFilter):
+    """A subclass of AttributeFilter.
+
+    A `DistanceFilter` represents the search criteria pattern comparing the distance
+    attribute of a CloseApproach to a reference value.
+    """
+
     @classmethod
     def get(cls, approach: CloseApproach) -> float:
+        """Return the distance attribute from a CloseApproach."""
         return approach.distance
 
 
 class HazardousFilter(AttributeFilter):
+    """A subclass of AttributeFilter.
+
+    A `HazardousFilter` represents the search criteria pattern comparing the hazardous
+    attribute of a NearEarthObject to a reference value.
+    """
+
     @classmethod
     def get(cls, approach: CloseApproach) -> bool:
+        """Return the hazardous attribute from a CloseApproach's NEO."""
         return approach.neo.hazardous
 
 
 class VelocityFilter(AttributeFilter):
+    """A subclass of AttributeFilter.
+
+    A `VelocityFilter` represents the search criteria pattern comparing the velocity
+    attribute of a CloseApproach to a reference value.
+    """
+
     @classmethod
     def get(cls, approach: CloseApproach) -> float:
+        """Return the velocity attribute from a CloseApproach."""
         return approach.velocity
 
 
@@ -150,7 +186,6 @@ def create_filters(
     :param hazardous: Whether the NEO of a matching `CloseApproach` is potentially hazardous.
     :return: A collection of filters for use with `query`.
     """
-    # TODO: Decide how you will represent your filters.
     filters = []
     if date:
         filters.append(DateFilter(operator.eq, date))
@@ -184,8 +219,7 @@ def limit(iterator, n=None):
     :param n: The maximum number of values to produce.
     :yield: The first (at most) `n` values from the iterator.
     """
-    # TODO: Produce at most `n` values from the given iterator.
     if not n:
         return iterator
     else:
-        return list(islice(iterator, n))
+        return islice(iterator, n)
