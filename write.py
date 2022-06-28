@@ -13,8 +13,13 @@ You'll edit this file in Part 4.
 import csv
 import json
 
+from pathlib import Path
+from typing import List
 
-def write_to_csv(results, filename):
+from models import CloseApproach
+
+
+def write_to_csv(results: List[CloseApproach], filename: Path) -> None:
     """Write an iterable of `CloseApproach` objects to a CSV file.
 
     The precise output specification is in `README.md`. Roughly, each output row
@@ -34,9 +39,16 @@ def write_to_csv(results, filename):
         "potentially_hazardous",
     )
     # TODO: Write the results to a CSV file, following the specification in the instructions.
+    with open(filename, "w") as file:
+        csv_writer = csv.DictWriter(file, fieldnames=fieldnames)
+        csv_writer.writeheader()
+        for result in results:
+            row_content = {**result.serialize(), **result.neo.serialize()}
+            row_content["potentially_hazardous"] = "True" if result.neo.hazardous else "False"
+            csv_writer.writerow(row_content)
 
 
-def write_to_json(results, filename):
+def write_to_json(results: List[CloseApproach], filename: Path) -> None:
     """Write an iterable of `CloseApproach` objects to a JSON file.
 
     The precise output specification is in `README.md`. Roughly, the output is a
@@ -48,3 +60,9 @@ def write_to_json(results, filename):
     :param filename: A Path-like object pointing to where the data should be saved.
     """
     # TODO: Write the results to a JSON file, following the specification in the instructions.
+    output_list = []
+    for result in results:
+        output_list.append({**result.serialize(), "neo": {**result.neo.serialize()}})
+
+    with open(filename, "w") as file:
+        json.dump(output_list, file, indent=4)

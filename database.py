@@ -14,6 +14,7 @@ You'll edit this file in Tasks 2 and 3.
 
 from typing import Dict, List, Union
 
+from filters import AttributeFilter
 from models import CloseApproach, NearEarthObject
 
 
@@ -106,5 +107,16 @@ class NEODatabase:
         :return: A stream of matching `CloseApproach` objects.
         """
         # TODO: Generate `CloseApproach` objects that match all of the filters.
-        for approach in self._approaches:
-            yield approach
+        if filters:
+            for approach in self._approaches:
+                if self.__filter_approach(approach, filters):
+                    yield approach
+        else:
+            for approach in self._approaches:
+                yield approach
+
+    def __filter_approach(self, approach: CloseApproach, filters: List[AttributeFilter]) -> bool:
+        if all(map(lambda filter: filter(approach), filters)):
+            return True
+        else:
+            return False

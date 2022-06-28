@@ -18,8 +18,8 @@ quirks of the data set, such as missing names and unknown diameters.
 You'll edit this file in Task 1.
 """
 from datetime import datetime
+# from math import isnan
 from typing import Union
-from xmlrpc.client import boolean
 
 from helpers import cd_to_datetime, datetime_to_str
 
@@ -80,6 +80,14 @@ class NearEarthObject:
             f"NearEarthObject(designation={self.designation!r}, name={self.name!r}, "
             f"diameter={self.diameter:.3f}, hazardous={self.hazardous!r})"
         )
+
+    def serialize(self) -> dict:
+        output = {}
+        output["designation"] = self.designation
+        output["name"] = self.name if self.name else ""
+        output["diameter_km"] = self.diameter # if not isnan(self.diameter) else "nan"
+        output["potentially_hazardous"] = self.hazardous
+        return output
 
 
 class CloseApproach:
@@ -155,3 +163,6 @@ class CloseApproach:
     @property
     def neo_id(self) -> str:
         return self._designation
+
+    def serialize(self) -> dict:
+        return {"datetime_utc": self.time_str, "distance_au": self.distance, "velocity_km_s": self.velocity}
